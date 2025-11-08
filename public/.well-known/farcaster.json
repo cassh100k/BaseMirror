@@ -1,13 +1,13 @@
 {
   "name": "BaseMirror",
   "homepageUrl": "https://basequote.today",
+  "icon": "https://i.postimg.cc/0jC7Mh83/quotation-logo-design-2021-graphics.jpg",
   "description": "See your mind on Base",
   "splash": {
     "title": "BaseMirror",
-    "description": "Daily AI reflections for builders and dreamers on Base.",
+    "description": "Daily AI reflections for builders and dreamers on Base",
     "action": {
       "title": "Open"
     }
   }
 }
-
