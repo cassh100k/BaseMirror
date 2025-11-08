@@ -5,7 +5,7 @@
     "signature": "sfQZU/2h2ndJo/JZk8Q2hBD1kyCRlgW9zc6GmMUdBm53txxGMC+ZMNtr1XVHsoEonG7HbVcoN0FoAoyqj8VRAxw="
   },
   "miniapp": {
-    "version": "1.0.0",
+    "version": "1",
     "name": "BaseMirror",
     "description": "Daily AI reflections for builders and dreamers on Base.",
     "iconUrl": "https://i.postimg.cc/0jC7Mh83/quotation-logo-design-2021-graphics.jpg",
@@ -16,4 +16,3 @@
     "requiredCapabilities": ["actions.ready", "actions.signIn"]
   }
 }
-
