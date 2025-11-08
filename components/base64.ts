@@ -1,0 +1,1 @@
+export function encodeBase64(s: string){ if (typeof window==='undefined'){ return Buffer.from(s,'utf8').toString('base64'); } return btoa(unescape(encodeURIComponent(s))); }

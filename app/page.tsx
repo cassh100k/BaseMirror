@@ -1,65 +1,114 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { sdk } from "@farcaster/miniapp-sdk";
+import MirrorCard from "@/components/MirrorCard";
+import MirrorButton from "@/components/MirrorButton";
+import * as htmlToImage from "html-to-image";
 
-export default function Home() {
+export default function HomePage() {
+  const [username, setUsername] = useState<string>("Guest");
+  const [fid, setFid] = useState<number | null>(null);
+  const [quote, setQuote] = useState<string>("Loading your reflection...");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "BaseMirror";
+
+  // 🎯 Initialize Farcaster MiniApp context and load reflection
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        await sdk.actions.ready();
+        const context = await sdk.context;
+        const user = context?.user;
+        if (mounted && user) {
+          if (user.username) setUsername(user.username);
+          if (typeof user.fid === "number") setFid(user.fid);
+        }
+      } catch (_) {
+        // ignore non-miniapp environments
+      }
+      await fetchQuote();
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  // 🪞 Fetch reflection
+  async function fetchQuote() {
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, fid })
+      });
+      const data = await res.json();
+      setQuote(data.quote || "Take a breath. Start again.");
+    } catch (err) {
+      setQuote("Quiet minds still speak.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // 💾 Save as image
+  async function handleSavePNG() {
+    if (!cardRef.current) return;
+    const node = cardRef.current;
+    const dataUrl = await htmlToImage.toPng(node, { pixelRatio: 2 });
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `BaseMirror_${new Date().toISOString()}.png`;
+    a.click();
+  }
+
+  // 📤 Share to Warpcast
+  function handleShare() {
+    const text = `"${quote}"\n— via ${appName} (basequote.today)`;
+    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="flex items-center justify-center min-h-[100svh] px-4 py-10 bg-bm-ink">
+      <div className="w-full max-w-2xl">
+        {/* Title Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mb-6 text-center"
+        >
+          <h1 className="text-3xl font-semibold tracking-tight">BaseMirror</h1>
+          <p className="text-sm text-white/60">See your mind on Base</p>
+        </motion.div>
+
+        {/* Reflection Card */}
+        <MirrorCard
+          ref={cardRef}
+          username={username}
+          quote={quote}
+          loading={isLoading}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+        {/* Action Buttons */}
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <MirrorButton onClick={handleSavePNG} label="Save" />
+          <MirrorButton onClick={handleShare} label="Share" />
+          <MirrorButton onClick={fetchQuote} label="Reflect again" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* Footer Info */}
+        <p className="mt-4 text-center text-xs text-white/50">
+          Signed in as{" "}
+          <span className="text-white/80">{username}</span>
+          {fid ? ` • fid ${fid}` : ""}
+        </p>
+        <p className="mt-1 text-center text-[11px] text-white/40">
+          basequote.today
+        </p>
+      </div>
+    </main>
   );
 }

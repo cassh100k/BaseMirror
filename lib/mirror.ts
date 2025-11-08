@@ -1,0 +1,1 @@
+export function sanitizeQuote(input: string){const trimmed=(input||'').trim();const noWrap=trimmed.replace(/^\"|\"$/g,'').replace(/\n/g,' ');return noWrap.replace(/\s+/g,' ');}
