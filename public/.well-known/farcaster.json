@@ -1,13 +1,19 @@
 {
-  "name": "BaseMirror",
-  "homepageUrl": "https://basequote.today",
-  "icon": "https://i.postimg.cc/0jC7Mh83/quotation-logo-design-2021-graphics.jpg",
-  "description": "See your mind on Base",
-  "splash": {
-    "title": "BaseMirror",
-    "description": "Daily AI reflections for builders and dreamers on Base",
-    "action": {
-      "title": "Open"
-    }
+  "accountAssociation": {
+    "header": "eyJmaWQiOjcwNjgxMiwidHlwZSI6ImF1dGgiLCJrZXkiOiIweEJCZUQxNTAyRDllNEY2YzAxZWM0ZDJkMDJGZjE3YzdBNDdDOTEyZkIifQ",
+    "payload": "eyJkb21haW4iOiJ3d3cuYmFzZXF1b3RlLnRvZGF5In0",
+    "signature": "sfQZU/2h2ndJo/JZk8Q2hBD1kyCRlgW9zc6GmMUdBm53txxGMC+ZMNtr1XVHsoEonG7HbVcoN0FoAoyqj8VRAxw="
+  },
+  "miniapp": {
+    "version": "1.0.0",
+    "name": "BaseMirror",
+    "description": "Daily AI reflections for builders and dreamers on Base.",
+    "iconUrl": "https://i.postimg.cc/0jC7Mh83/quotation-logo-design-2021-graphics.jpg",
+    "homeUrl": "https://www.basequote.today",
+    "canonicalDomain": "www.basequote.today",
+    "requiredChains": ["eip155:8453"],
+    "tags": ["reflection", "ai", "daily"],
+    "requiredCapabilities": ["actions.ready", "actions.signIn"]
   }
 }
+
