@@ -1,1 +1,13 @@
-{"name":"BaseMirror","description":"See your mind on Base"}
+{
+  "name": "BaseMirror",
+  "homepageUrl": "https://basequote.today",
+  "description": "See your mind on Base",
+  "splash": {
+    "title": "BaseMirror",
+    "description": "Daily AI reflections for builders and dreamers on Base.",
+    "action": {
+      "title": "Open"
+    }
+  }
+}
+
